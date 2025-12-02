@@ -9,6 +9,7 @@ export const useChatStore = create(set => ({
     selectedUser: null,
     isUserLoading: false,
     isMessagesLoading: false,
+    isSigningUp: false,
     getUsers: async () => {
         try {
             const response = await axiosInstance.get('/message/users');
@@ -29,5 +30,6 @@ export const useChatStore = create(set => ({
             toast.error('Error fetching messages');
         }
     },
-    setSelectedUser: (selectedUser: User) => set({ selectedUser: selectedUser })
+    setSelectedUser: (selectedUser: User) => set({ selectedUser: selectedUser }),
+
 }))

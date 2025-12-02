@@ -9,6 +9,8 @@ import {useEffect} from "react";
 import {Loader} from "lucide-react";
 
 const App = () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const {checkAuth, authUser, isCheckingAuth } = useAuthStore();
 
     useEffect(()=>{
@@ -28,9 +30,9 @@ const App = () => {
             <Navbar/>
             <Routes>
                 <Route path="/" element={<Homepage/>}/>
-                <Route path="/login" element={<Login/>}/>
-                <Route path="/signup" element={<Signup/>}/>
-                <Route path="/profile" element={<Profile/>}/>
+                <Route path="/login" element={!authUser ? <Login/> : <Homepage/>}/>
+                <Route path="/signup" element={!authUser && <Signup/> }/>
+                <Route path="/profile" element={!authUser ? <Profile/> : <Login/>}/>
                 <Route path="*" element={<div>404</div>}/>
             </Routes>
         </div>

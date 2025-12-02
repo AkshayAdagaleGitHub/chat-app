@@ -12,6 +12,10 @@ const generateToken = (user) => {
 export const signup = async (req, res) => {
     const { name, email, password } = req.body;
     try{
+        console.log(name, email, password);
+        if(name === undefined || name.trim().length === 0){
+            return res.status(400).send('name is required');
+        }
         // hash password
         if(password.length < 6){
             res.status(400).send('password must be least 6 characters long');
