@@ -10,39 +10,45 @@ const generateToken = (user) => {
 };
 
 export const signup = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { fullName, email, password } = req.body;
     try{
-        console.log(name, email, password);
-        if(name === undefined || name.trim().length === 0){
+        console.log(fullName, email, password);
+        if(fullName === undefined || fullName.trim().length === 0){
             return res.status(400).send('name is required');
         }
         // hash password
         if(password.length < 6){
-            res.status(400).send('password must be least 6 characters long');
+            return res.status(400).send('password must be least 6 characters long');
         }
 
         const userExists = await userModel.findOne({ where: { email } });
         if(userExists){
-            res.status(400).send('user already exists');
+            return res.status(400).send('user already exists');
         }
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         const user = await userModel.create(
-            { name, email, password: hashedPassword });
-
+            { fullName, email, password: hashedPassword });
+        console.log("new user created successfully ",user);
         if(user){
             // generate jwt token
             const token = generateToken(user);
-            res.cookie('jwt', token, {
-                maxAge: 1000 * 60 * 60 * 24 * 7,
-                httpOnly: true,// so that cookie is not accessible by client side script
-                secure: process.env.NODE_ENV === 'production'
+            // res.cookie('jwt', token, {
+            //     maxAge: 1000 * 60 * 60 * 24 * 7,
+            //     httpOnly: true,// so that cookie is not accessible by client side script
+            //     secure: process.env.NODE_ENV === 'production'
+            // });
+            res.cookie("jwt", token, {
+                maxAge: 7 * 24 * 60 * 60 * 1000, // MS
+                httpOnly: true, // prevent XSS attacks cross-site scripting attacks
+                sameSite: "strict", // CSRF attacks cross-site request forgery attacks
+                secure: process.env.NODE_ENV !== "development",
             });
 
             await user.save();
 
-            res.status(201)
+            return res.status(201)
                 .json({
                     message: 'user created successfully',
                     user: user,
@@ -50,7 +56,7 @@ export const signup = async (req, res) => {
                 });
             // res.status(201).send(user);
         }else{
-            res.status(400).send({
+            return res.status(400).send({
                 message:'Invalid user data'
             });
         }
@@ -118,8 +124,9 @@ export const updateProfile = (req, res) => {
 };
 
 export const checkAuth = (req, res) => {
-    console.log(req.user);
-    if(userModel.id === req.user.id){
-       res.status(200).send(req.user);
+    console.log("userModel id ", userModel.id);
+    console.log("req user id ", req.user.id);
+    if(req.user.id){
+       return res.status(200).send(req.user);
     }
 }

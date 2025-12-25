@@ -2,13 +2,13 @@ import { DataTypes } from 'sequelize';
 import {sequelize} from "../config/db.js";
 
 export const userModel
-    =  sequelize.define('User', {
+    =  sequelize.define('ChatUser', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true
         },
-        name: {
+        fullName: {
             type: DataTypes.STRING,
             allowNull: false
         },

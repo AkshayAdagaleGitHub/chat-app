@@ -1,39 +1,48 @@
-import {Navbar} from "./components/Navbar.tsx";
-import {Route, Routes} from "react-router-dom";
-import {Homepage} from "./pages/homepage.tsx";
-import {Login} from "./pages/Login.tsx";
-import {Signup} from "./pages/Signup.tsx";
-import {Profile} from "./pages/profile.tsx";
-import {useAuthStore} from "./store/useAuthStore";
+import NavBar from "./component/NavBar";
+import {Routes, Route, Navigate } from "react-router-dom";
+import HomePage from "./component/HomePage";
+import SignUpPage from "./component/SignUpPage";
+import LoginPage from "./component/LoginPage";
+import SettingPage from "./component/SettingPage";
+import ProfilePage from "./component/ProfilePage";
+import {useAuthStore} from "../src/store/useAuthStore.ts";
 import {useEffect} from "react";
 import {Loader} from "lucide-react";
 
-const App = () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const {checkAuth, authUser, isCheckingAuth } = useAuthStore();
+const App = ()=>  {
 
-    useEffect(()=>{
-        checkAuth();
-    },[checkAuth]);
+    const checkAuth = useAuthStore((state) => state.checkAuth);
+    const authUser = useAuthStore((state) => state.authUser);
+    const isCheckingAuth = useAuthStore((state) => state.isCheckingAuth)
+
+    useEffect(() => {
+        console.log('checking auth in App.tsx');
+        console.log('checking auth in App.tsx');
+        console.log("isCheckingAuth", isCheckingAuth);
+        console.log("authUser", authUser);
+        checkAuth().then((r) => {
+            console.log("Inside useEffect isCheckingAuth", isCheckingAuth);
+            console.log("r ", r);
+        });
+    },[checkAuth])
 
     if(isCheckingAuth && !authUser){
-        <div className="flex justify-center items-center h-screen">
-            <Loader className="size-10 animate-spin"/>
-        </div>
+
+        return (
+            <div className="flex justify-center items-center h-screen w-screen">
+                <Loader className="size-10 animate-spin" color="white" size={"24px"}/>
+            </div>
+        )
     }
-
-    console.log(authUser);
-
     return (
-        <div className="text-red-500">
-            <Navbar/>
+        <div>
+            <NavBar/>
             <Routes>
-                <Route path="/" element={<Homepage/>}/>
-                <Route path="/login" element={!authUser ? <Login/> : <Homepage/>}/>
-                <Route path="/signup" element={!authUser && <Signup/> }/>
-                <Route path="/profile" element={!authUser ? <Profile/> : <Login/>}/>
-                <Route path="*" element={<div>404</div>}/>
+                <Route path="/" element={ authUser ? <HomePage/> : <SignUpPage/>}/>
+                <Route path="/signup" element={!authUser ? <SignUpPage/> : <Navigate to="/"/>}/>
+                <Route path="/login" element={!authUser ? <LoginPage/> : <Navigate to="/"/>}/>
+                <Route path="/settings-page" element={authUser ? <SettingPage/> : <LoginPage/>}/>
+                <Route path="/profile-page" element={authUser ? <ProfilePage/> : <LoginPage/>}/>
             </Routes>
         </div>
     )
