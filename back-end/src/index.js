@@ -6,11 +6,13 @@ import dotenv from 'dotenv';
 import {sequelize} from './config/db.js';
 import './models/userModel.js';
 import cors from 'cors';
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser())
 app.use(cors(
     {
             origin: 'http://localhost:5173',
@@ -21,10 +23,10 @@ app.use('/api/message', messageRoutes);
 
 const PORT = process.env.PORT || 5001;
 
-sequelize.sync()
+sequelize.sync( { force: true })
     .then(() => {
         console.log('DB connected')
         app.listen(PORT, () => {
-            console.log('server started on port 3000');
+            console.log('server started on port ', PORT);
         });
     }).catch(err => console.log(err));
