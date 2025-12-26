@@ -122,6 +122,7 @@ const SignUpPage = () => {
                             focus:ring-primary
                             focus:border-primary"/>
                             <button
+                                type="button"
                                 onClick={() => setShowPassword(!showPassword)}
                                 className="absolute inset-y-0 right-0 pr-3 flex items-center">
                                 {showPassword ? <EyeClosed className="size-5"/> : <Eye className="size-5 rotate-180"/>}

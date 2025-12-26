@@ -47,5 +47,34 @@ export const useAuthStore = create<AuthState>((set) => ({
         }finally {
             set({isSigningUp: false})
         }
+    },
+    logout: async () => {
+        set({isLoggingOut: true});
+        try{
+            await axiosInstance.post('/auth/logout');
+            localStorage.removeItem('jwt');
+            toast.success('Logged out successfully');
+            set({authUser: null})
+        }catch (e) {
+            console.log(e);
+        }finally {
+            set({isLoggingOut: false})
+        }
+    },
+    login: async (formData) => {
+        set({isLoggingIn: true});
+        try{
+            const response = await axiosInstance.post('/auth/login', formData);
+            const data = response.data;
+            console.log("data -> ",data);
+            localStorage.setItem('jwt', data.token);
+            toast.success('Logged in successfully');
+            set({authUser: data})
+        }catch (e) {
+            toast.error('Error logging in');
+            console.log(e);
+        }finally {
+            set({isLoggingIn: false})
+        }
     }
 }));
