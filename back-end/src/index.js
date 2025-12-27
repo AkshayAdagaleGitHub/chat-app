@@ -23,7 +23,7 @@ app.use('/api/message', messageRoutes);
 
 const PORT = process.env.PORT || 5001;
 
-sequelize.sync( { force: true })
+sequelize.sync( { force: false })
     .then(() => {
         console.log('DB connected')
         app.listen(PORT, () => {

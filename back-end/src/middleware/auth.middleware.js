@@ -15,8 +15,9 @@ export const protectRoute = async (req, res, next) => {
                     message: 'not authorized, please log in'
                 });
         }
+
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(decoded);
+        // console.log(decoded);
         if(!decoded){
             return res.status(401).send('token is not valid');
         }
@@ -28,7 +29,7 @@ export const protectRoute = async (req, res, next) => {
         if(!user || user == null){
             return res.status(404).send('user not found');
         }
-        console.log("User Found !!! ", user);
+        // console.log("User Found !!! ", user);
         req.user = user;
         // console.log("req user ", req.user);
         next();
