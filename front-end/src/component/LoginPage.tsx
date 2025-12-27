@@ -35,9 +35,9 @@ const LoginPage = () => {
     return (
         <div className="min-h-screen grid">
         <div className="flex flex-col justify-center items-center p-6 sm:p-12">
+
                 <div className="w-full max-w-md space-y-8
                 bordered
-                bg-white
                 p-8
                 rounded-lg
                 shadow-md
@@ -84,16 +84,16 @@ const LoginPage = () => {
                                    required
                                    onChange={handleChange}
                                    className="w-full
-                               px-4
-                               py-3
-                               pl-10
-                               rounded-md
-                               border
-                               border-gray-300
-                               focus:outline-none
-                               focus:ring
-                               focus:ring-primary
-                               focus:border-primary"/>
+                                               px-4
+                                               py-3
+                                               pl-10
+                                               rounded-md
+                                               border
+                                               border-gray-300
+                                               focus:outline-none
+                                               focus:ring
+                                               focus:ring-primary
+                                               focus:border-primary"/>
                         </div>
 
                         <div className="relative">
@@ -111,17 +111,17 @@ const LoginPage = () => {
                                 required
                                 onChange={handleChange}
                                 className="w-full
-                            px-4
-                            py-3
-                            pl-10
-                            top-5
-                            rounded-md
-                            border
-                            border-gray-300
-                            focus:outline-none
-                            focus:ring
-                            focus:ring-primary
-                            focus:border-primary"/>
+                                            px-4
+                                            py-3
+                                            pl-10
+                                            top-5
+                                            rounded-md
+                                            border
+                                            border-gray-300
+                                            focus:outline-none
+                                            focus:ring
+                                            focus:ring-primary
+                                            focus:border-primary"/>
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
@@ -142,7 +142,7 @@ const LoginPage = () => {
                             focus:ring
                             focus:ring-primary
                             focus:ring-offset-1">
-                            Sign Up
+                            Login
                         </button>
                     </form>
                 </div>

@@ -14,6 +14,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     isLoading: false,
     error: null,
     isSigningUp: false,
+    onlineUsers: [],
     checkAuth: async () => {
         set({ isCheckingAuth: true });
         try{

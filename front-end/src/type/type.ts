@@ -7,10 +7,12 @@ export interface User {
 
 export interface ChatUser{
     users:[],
-    selectedUser: null,
+    setSelectedUser: (user: User) => void;
+    selectedUser: User | null,
     isUsersLoading: boolean;
     isMessagesLoading: boolean;
     messages: Message[];
+    isMessageLoading: boolean;
     lastSeen: Date;
     unreadCount: number;
     online: boolean;
@@ -29,30 +31,35 @@ export interface ChatUser{
     lastMessageSentByMeSeenTime: Date | null;
     lastMessageSentByMeSeenBy: User | null;
     getUsers: () => Promise<void>;
-    getMessages: (userId: number) => Promise<void>;
+    getMessages: (messageData: Message) => Promise<void>;
     updateOnlineStatus: () => Promise<void>;
+    sendMessage: (messageData: Message) => Promise<void>;
 }
 
 export interface Message {
-    id: number;
-    text: string;
-    senderId: number;
-    receiverId: number;
-    createdAt: Date;
-    seen: boolean;
-    seenBy: User | null;
-    sentByMe: boolean;
-    sentByMeTime: Date | null;
-    sentByMeSeen: boolean;
-    sentByMeSeenTime: Date | null;
-    sentByMeSeenBy: User | null;
-    sentBy: User | null;
-    chatUser: ChatUser | null;
-    chatUserLastMessage: Message | null;
-    chatUserLastMessageTime: Date | null;
-    chatUserLastMessageSeen: boolean;
-    chatUserLastMessageSeenTime: Date | null;
-    chatUserLastMessageSeenBy: User | null;
+    id?: number;
+    messageText: string;
+    fullName?: string | undefined;
+    email?: string | undefined;
+    fromUserId?: number | undefined;
+    toUserId?: number | undefined;
+    senderId?: number | undefined;
+    receiverId?: number | undefined;
+    createdAt?: string;
+    seen?: boolean;
+    seenBy?: User | null;
+    sentByMe?: boolean;
+    sentByMeTime?: Date | null;
+    sentByMeSeen?: boolean;
+    sentByMeSeenTime?: Date | null;
+    sentByMeSeenBy?: User | null;
+    sentBy?: User | null;
+    chatUser?: ChatUser | null;
+    chatUserLastMessage?: Message | null;
+    chatUserLastMessageTime?: Date | null;
+    chatUserLastMessageSeen?: boolean;
+    chatUserLastMessageSeenTime?: Date | null;
+    chatUserLastMessageSeenBy?: User | null;
 
 }
 export interface AuthState {
