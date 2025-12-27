@@ -77,7 +77,7 @@ export const login = async (req, res) => {
                 message: 'user not found'
             });
         }
-        console.log(user);
+        // console.log(user);
         const isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch){
             return res.status(400).send('invalid credentials');
