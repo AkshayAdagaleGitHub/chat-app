@@ -7,13 +7,13 @@ import {useEffect} from "react";
 const HomePage = () => {
     const jwt = localStorage.getItem('jwt');
     const { selectedUser, updateOnlineStatus } = useChatStore();
-    console.log('selectedUser', selectedUser);
 
-    // useEffect(()=>{
-    //     if(jwt){
-    //         updateOnlineStatus();
-    //     };
-    // })
+    useEffect(()=>{
+        if(jwt){
+            updateOnlineStatus();
+        };
+    })
+
     return (
         <div className="h-screen bg-base-200">
             <div className="flex items-center justify-center pt-20 px-4">

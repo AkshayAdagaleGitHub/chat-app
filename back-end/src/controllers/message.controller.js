@@ -2,13 +2,11 @@ import {userModel} from "../models/userModel.js";
 import  { Op } from "sequelize";
 import {MessageModel} from "../models/userModel.js";
 import jwt from "jsonwebtoken";
+import {getReceiverSocketId} from "../config/socket.js";
 
 export const getAllUsers = async (req, res) => {
     try{
         const loggedInUser = req.user.id;
-        console.log("loggedInUser", loggedInUser);
-        // const filteredUsers =
-        //     await userModel.findAll({id: {$ne: loggedInUser}})
         const users = await userModel.findAll({
             attributes: {
                 exclude: ['password', 'createdAt', 'updatedAt']
@@ -39,13 +37,8 @@ export const getAllUsers = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
     console.log("Inside sendMessage");
-    console.log("req.body ", req);
     const { messageText, createdAt } = req.body;
-    // const { createdAt } = req.body;
     const { userId } = req.params;
-    console.log("message ", messageText);
-    console.log("createdAt ", createdAt);
-    console.log("userId ", userId);
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -59,6 +52,9 @@ export const sendMessage = async (req, res) => {
         const fullName = user.dataValues.fullName;
         const email = user.dataValues.email;
 
+        console.log("fromUserId --> ", decoded.id);
+        console.log("toUserId --> ", userId);
+
         const messageData = {
             fromUserId: decoded.id,
             toUserId: userId,
@@ -67,7 +63,11 @@ export const sendMessage = async (req, res) => {
             messageText: messageText,
             createdAt: new Date(Number(createdAt))
         };
-        console.log(await MessageModel.create(messageData));
+        await MessageModel.create(messageData);
+        const receiverSocketId = getReceiverSocketId(userId);
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit("newMessage", newMessage);
+        }
         res.status(200).send(user);
     }catch (e) {
         console.log(e);
@@ -96,9 +96,13 @@ export const sendMessage = async (req, res) => {
 export const getMessages = async (req, res) => {
     console.log("Inside getMessages");
 
-    const { fromUserId, toUserId } = req.query;
+    const { toUserId } = req.query;
     const token = req.cookies.jwt;
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const fromUserId = decoded.id;
+
+    console.log("fromUserId ", fromUserId);
+    console.log("toUserId ", req.query.toUserId);
 
     if (!fromUserId || !toUserId) {
         return res.status(400).send({ error: "Missing User IDs" });
@@ -108,8 +112,8 @@ export const getMessages = async (req, res) => {
         const messages = await MessageModel.findAll({
             where: {
                 [Op.or]: [
-                    { fromUserId:  decoded.id, toUserId: toUserId },
-                    { fromUserId: toUserId, toUserId:  decoded.id }
+                    { fromUserId:  fromUserId, toUserId: toUserId },
+                    { fromUserId: toUserId, toUserId:  fromUserId }
                 ]
             }
         });
@@ -117,7 +121,7 @@ export const getMessages = async (req, res) => {
             console.log("No messages found");
             return res.status(404).send({ error: "Messages not found" });
         }
-
+        console.log("messages ", messages);
         res.status(200).send(messages);
     } catch (error) {
         console.log(error);

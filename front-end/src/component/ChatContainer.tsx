@@ -7,11 +7,21 @@ import {useAuthStore} from "../store/useAuthStore.ts";
 import {formatDate} from "../lib/util.ts";
 
 export const ChatContainer = () => {
-   const {messages, getMessages, isMessageLoading, selectedUser} = useChatStore()
+   const {
+       messages,
+       getMessages,
+       isMessageLoading,
+       selectedUser,
+       subscribeToNewMessages,
+       unsubscribeFromMessages
+   } = useChatStore()
     const { authUser } = useAuthStore();
 
     useEffect( () => {
+
         if(selectedUser){
+            console.log("selectedUser", selectedUser);
+            console.log("authUser", authUser);
             getMessages({
                 fromUserId: authUser?.id,
                 toUserId: selectedUser.id,
@@ -19,9 +29,12 @@ export const ChatContainer = () => {
             }).then(r =>{
                 console.log("messages", r);
             })
+            subscribeToNewMessages();
         }
-
-    },[selectedUser, getMessages])
+        return () => {
+            unsubscribeFromMessages();
+        }
+    },[selectedUser, getMessages, subscribeToNewMessages, unsubscribeFromMessages])
 
     if(isMessageLoading){
         return (
@@ -38,20 +51,23 @@ export const ChatContainer = () => {
             {/*<p>Messages...</p>*/}
             <div className="flex-1 overflow-y-auto p-6 space-y-8">
                 {messages.map((message) => (
+                    console.log("message", message),
                     <div
-                        key={message.id}
-                         className={`chat  ${message.fromUserId === authUser?.id ? "chat-end" : "chat-start"}`}>
+                        key={message.createdAt}
+                         // className={`chat  ${message.fromUserId === authUser?.id ? "chat-end" : "chat-start"}`}>
+                         className={`chat ${message.fromUserId === authUser?.id ? "chat-end" : "chat-start" }`}>
 
                         <div className={"chat-image avatar"}>
                             <div className={"w-10 h-10 rounded-full border-2 "}>
                                 <img
-                                    src={message.fromUserId === authUser?.id ? authUser?.profilePic : selectedUser?.senderProfilePic || "/avatar.png"}
+                                    src={message.fromUserId === authUser?.id ? authUser?.profilePic : selectedUser?.profilePic || "/avatar.png"}
                                     alt={"profile pic of user " + (message.fromUserId === authUser?.id ? authUser?.fullName : selectedUser?.fullName || "Unknown User")}
                                     className={"w-10 h-10 rounded-full"}/>
                                 <br/>
                             </div>
                             <div className={"chat-header mb-1"}>
-                                <time className={"text-xs text-gray-400 ml-1"}>{formatDate(message.createdAt)}</time>
+                                <time className={"text-xs text-gray-400 ml-1"}>{message.createdAt !== undefined
+                                    ? formatDate(message.createdAt) : ""} </time>
                             </div>
                                 {/*<span>{message.fullName}</span>*/}
                         </div>

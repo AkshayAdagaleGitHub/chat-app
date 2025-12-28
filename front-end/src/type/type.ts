@@ -1,3 +1,5 @@
+import {io, Socket} from "socket.io-client";
+
 export interface User {
     id: number;
     fullName: string;
@@ -34,6 +36,8 @@ export interface ChatUser{
     getMessages: (messageData: Message) => Promise<void>;
     updateOnlineStatus: () => Promise<void>;
     sendMessage: (messageData: Message) => Promise<void>;
+    unsubscribeFromMessages: () => void;
+    subscribeToNewMessages: () => void;
 }
 
 export interface Message {
@@ -70,11 +74,18 @@ export interface AuthState {
     isRegistering: boolean;
     isUpdatingProfile: boolean;
     isSigningUp: boolean;
+    socket: null | Socket;
     signsUp: (data: SignUpFormData) => Promise<void>;
     checkAuth: () => Promise<void>;
     logout: () => Promise<void>;
     login: (data: LoginFormData) => Promise<void>;
+    connectSocket: () => void;
+    disconnectSocket: () => void;
+    onlineUsers:[];
 }
+    // sendMessage: (message: Message) => void;
+    // updateProfile: (data: SignUpFormData) => Promise<void>;
+    //
 export interface LoginFormData {
     email: string;
     password: string;

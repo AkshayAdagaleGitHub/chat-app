@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios.ts';
 import toast from "react-hot-toast";
 import {type ChatUser, type Message} from '../type/type.ts';
+import {useAuthStore} from "./useAuthStore.ts";
 
 export const useChatStore = create<ChatUser>((set, get) => ({
     messages: [],
@@ -33,7 +34,7 @@ export const useChatStore = create<ChatUser>((set, get) => ({
         try{
             const response = await axiosInstance.get('/message/get-all-users');
             const data = response.data;
-            console.log("data -> ",data);
+            // console.log("data -> ",data);
             set({users: data})
         }catch (e) {
             console.log(e);
@@ -69,14 +70,15 @@ export const useChatStore = create<ChatUser>((set, get) => ({
     },
     updateOnlineStatus: async () => {
         try{
-            const response = await axiosInstance.put(`/auth/online`);
-            const data = response.data;
-            console.log("data -> ",data);
-            set({online: true})
+            // const response = await axiosInstance.put(`/auth/online`);
+            // const data = response.data;
+            // // console.log("data -> ",data);
+            // set({online: true})
+            // return data;
         }catch (e) {
             console.log(e);
         }finally {
-            console.log("finally");
+            console.log("finally in update online status");
         }
     },
     setSelectedUser: (user) => {
@@ -89,12 +91,30 @@ export const useChatStore = create<ChatUser>((set, get) => ({
         try{
             const response = await axiosInstance.post(`/message/send/${selectedUser?.id}`, messageData);
             const data = response.data;
-            console.log("data -> ",data);
+            // console.log("data -> ",data);
             set({messages: [...messages, data]})
         }catch (e) {
             console.log(e);
         }finally {
             console.log("finally");
         }
-    }
+    },
+    subscribeToNewMessages: async () => {
+        const { selectedUser } = get();
+        // console.log("selectedUser ", selectedUser);
+        const socket = useAuthStore.getState().socket;
+        if(!socket){
+            return;
+        }
+        socket.on("newMessage", (message) => {
+            // console.log("newMessage ", message);
+            // if(message.fromUserId === selectedUser?.id){
+                set({messages: [...get().messages, message]})
+            // }
+        })
+    },
+    unsubscribeFromMessages: () => {
+        const socket = useAuthStore.getState().socket;
+        if (socket) socket.off("newMessage");
+    },
 }));

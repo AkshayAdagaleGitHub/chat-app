@@ -1,9 +1,9 @@
 import {useChatStore} from "../store/useChatStore.ts";
-import {useAuthStore} from "../store/useAuthStore.ts";
+// import {useAuthStore} from "../store/useAuthStore.ts";
 
 export const ChatHeader = () => {
-    const {selectedUser, setSelectedUser} = useChatStore();
-    const {onlineUsers} = useAuthStore();
+    const {selectedUser} = useChatStore();
+    // const {onlineUsers} = useAuthStore();
 
     return (
         <div className="p-2.5 border-b border-base-300">

@@ -7,9 +7,8 @@ import {sequelize} from './config/db.js';
 import './models/userModel.js';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
-
+import {app, server } from './config/socket.js';
 dotenv.config();
-const app = express();
 
 app.use(express.json());
 app.use(cookieParser())
@@ -26,7 +25,7 @@ const PORT = process.env.PORT || 5001;
 sequelize.sync( { force: false })
     .then(() => {
         console.log('DB connected')
-        app.listen(PORT, () => {
+        server.listen(PORT, () => {
             console.log('server started on port ', PORT);
         });
     }).catch(err => console.log(err));
